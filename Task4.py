@@ -35,11 +35,12 @@ for row in texts:
 
 # O(n)=n n is the number of entries in the sentCalls set 
 for contact in sentCalls:
-    if contact not in (recivedCalls, sentTexts, recivedCalls):
+    if contact not in (recivedCalls | sentTexts | recivedCalls):
         possibleTelemarketers.add(contact)
 
 # no duplicates because set 
-possibleTelemarketers = list(sorted(possibleTelemarketers))
+# possibleTelemarketers = list(sorted(possibleTelemarketers))
+possibleTelemarketers = sorted(sentCalls.difference(recivedCalls|sentTexts|recivedTexts))
 print ("These numbers could be telemarketers:")
 print(*possibleTelemarketers, sep="\n")
 
