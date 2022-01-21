@@ -3,7 +3,7 @@ Read file into texts and calls.
 It's ok if you don't understand how to read files.
 """
 import csv
-with open('C:/Users/Rashi_Dubey/Downloads/p0/P0/texts.csv', 'r') as f:
+with open('texts.csv', 'r') as f:
     totalPhoneRecords = 0 
     reader = csv.reader(f)
     texts = list(reader)
@@ -14,7 +14,7 @@ for row in texts:
     unique_tele_nums.add(row[0])
     unique_tele_nums.add(row[1])
        
-with open('C:/Users/Rashi_Dubey/Downloads/p0/P0/calls.csv', 'r') as f:
+with open('calls.csv', 'r') as f:
     reader = csv.reader(f)
     calls = list(reader)
 
