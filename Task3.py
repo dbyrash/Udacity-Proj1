@@ -4,6 +4,8 @@ It's ok if you don't understand how to read files.
 """
 import csv
 import re
+from functools import reduce
+
 
 with open('texts.csv', 'r') as f:
     reader = csv.reader(f)
@@ -13,65 +15,45 @@ with open('calls.csv', 'r') as f:
     reader = csv.reader(f)
     calls = list(reader)
 
-sendingTelephone = []
-receivingTelephone = []
-# timestamp = [] 
-# duration = [] 
+sentCalls = []
+recievedCalls = []
+
+rowbangaloreCalls = list(filter(lambda x: x[0][:5] == '(080)', calls))
+# print(rowbangaloreCalls)
 
 # initializing for PartA 
-areaCodes = [] 
-# initializing for Part B
-revivedCalls = [] 
-countOfSentCalls = 0
-for row in calls:
-    sendingTelephone = row[0]
-    receivingTelephone = row[1] 
-    # print(receivingTelephone)
-    if sendingTelephone.startswith('(080'):
-      countOfSentCalls+=1
-      if receivingTelephone.startswith('(0'):
-        # O(n) where n = length of string 
-        fixedLine = receivingTelephone[0:receivingTelephone.find(')')+1]
-        revivedCalls.append(fixedLine)
-        areaCodes.append(fixedLine)
-        # print("{} fixed area code".format(areaCode)) 
-        # break
-      if receivingTelephone.startswith(('7', '8', '9')):
-        # O(n) where n = length of string 
-        mobileLine = receivingTelephone[0:4]
-        areaCodes.append(mobileLine)
-
-      if receivingTelephone.startswith('140'):
-        # O(n) where n = length of string 
-        telemarketerLine = '140'
-        areaCodes.append(telemarketerLine)
-
-# PART - A
-# sorting -- O(n)= n*logn
-
-areaCodes = list(set(sorted(areaCodes)))
-print("The numbers called by people in Bangalore have codes:") 
-# * operator helps separate content by space 
-print(*areaCodes, sep='\n')
+areaCodes = dict()
 
 
-# PART - B
-# O(n) = 1 - constant as it is arithmatic operation 
-revivedCalls = len(revivedCalls)
-# print(revivedCalls)
-# print(countOfSentCalls)
-percentage = (revivedCalls/countOfSentCalls)*100
-print("{:.2f} percent of calls from fixed lines in Bangalore are calls to other fixed lines in Bangalore".format(percentage))
+for each in rowbangaloreCalls:
+  if each[1].startswith('('):
+    if re.match(r"\(([0-9]+)\)", each[1]).group(0)[1:-1] in areaCodes:
+      areaCodes[re.match(r"\(([0-9]+)\)", each[1]).group(0)[1:-1]] += 1
+    else:
+        areaCodes[re.match(r"\(([0-9]+)\)", each[1]).group(0)[1:-1]] = 1 
+ 
+  elif each[1][:3] == '140':
+    if '140' in areaCodes:
+      areaCodes['140'] += 1
+    else:
+      areaCodes['140'] = 1
+  else:
+    if each[1][0:4] in areaCodes: 
+      areaCodes[each[1][:4]] += 1
 
+    else:
+      areaCodes[each[1][:4]] = 1
 
+            
+# print(areaCodes)
 
-      
+print("The numbers called by people in Bangalore have codes:")
+for codes in sorted([*areaCodes]):
+    print(codes)
 
-
-
-
-
-
+bangaloreFixedLines = areaCodes['080']
+totalFixedLines = reduce(lambda x, value: x+value, areaCodes.values(), 0)
+print(f"{round(bangaloreFixedLines*100/totalFixedLines,2)} percent of calls from fixed lines in Bangalore are calls to other fixed lines in Bangalore.")
 
 """
 TASK 3:
